@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// IHTTPHandler : interface  http handler
 type IHTTPHandler interface {
 	GetHTTPHandler() []*HTTPHandler
 	GetByID(http.ResponseWriter, *http.Request)
@@ -14,6 +15,7 @@ type IHTTPHandler interface {
 	GetAll(http.ResponseWriter, *http.Request)
 }
 
+// HTTPHandler : implements IHTTPHandler
 type HTTPHandler struct {
 	Authenticated bool
 	Method        string
@@ -23,9 +25,8 @@ type HTTPHandler struct {
 }
 
 type response struct {
-	Status  int         `json:"status,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
-	Message string      `json:"message,omitempty"`
+	Data         interface{} `json:"data,omitempty"`
+	ErrorMessage string      `json:"error_message,omitempty"`
 }
 
 func (hdlr *HTTPHandler) GetHTTPHandler() []HTTPHandler {
@@ -57,13 +58,13 @@ func WriteJSONResponse(w http.ResponseWriter,
 	payload interface{},
 	code int,
 	err error) {
+
 	resp := &response{
-		Status: code,
-		Data:   payload,
+		Data: payload,
 	}
 
 	if nil != err {
-		resp.Message = err.Error()
+		resp.ErrorMessage = err.Error()
 	}
 
 	response, _ := json.Marshal(resp)

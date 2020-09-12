@@ -20,11 +20,11 @@ func NewLoginRepository(conn *sql.DB) *LoginRepository {
 
 func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Login) (user *models.User, err error) {
 	var buffer bytes.Buffer
-	buffer.WriteString("SELECT id, email")
-	buffer.WriteString(" FROM user_detail")
-	buffer.WriteString(" WHERE email = ?")
-	buffer.WriteString(" AND password = ?")
-	buffer.WriteString(" AND deleted = 0")
+	buffer.WriteString(`SELECT id, email
+		FROM user_detail
+		WHERE email = ?
+		AND password = ?
+		AND deleted = 0`)
 
 	rows, err := login.conn.QueryContext(ctx, buffer.String(), obj.Email, obj.Password)
 
@@ -34,18 +34,18 @@ func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Logi
 
 	defer rows.Close()
 
-	if rows.Next() {
-		user = new(models.User)
-		err = rows.Scan(
-			&user.Id,
-			&user.Email,
-		)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		err = models.DBErrNotFound
+	if !rows.Next() {
+		return nil, models.ErrDBRecordNotFound
 	}
 
-	return user, err
+	user = new(models.User)
+	err = rows.Scan(
+		&user.Id,
+		&user.Email,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

@@ -13,6 +13,7 @@ const (
 	sqliteDriverName = "sqlite3"
 )
 
+// Dummy data for authenticated user
 var queries = []string{
 	`CREATE TABLE IF NOT EXISTS user_detail (
 	    id                  INTEGER     PRIMARY KEY,
@@ -24,15 +25,18 @@ var queries = []string{
 	`INSERT OR IGNORE INTO user_detail (email, password, deleted) VALUES ('personia@org.com', 'personia', 0)`,
 }
 
+// SQLLite : implement IDB interface for sqllite DB
 type SQLLite struct {
 }
 
+// NewConnection : new sqllite conneection struct
 func (lite *SQLLite) NewConnection() (*sql.DB, error) {
 	sqliteCfg := config.Config().SQLite
 	log.Println(sqliteCfg.DataSourceName)
 	return sql.Open(sqliteDriverName, sqliteCfg.DataSourceName)
 }
 
+// we are facillitating user authentication through dummy user
 func init() {
 	sqlite := new(SQLLite)
 	conn, err := sqlite.NewConnection()

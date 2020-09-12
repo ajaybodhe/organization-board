@@ -14,17 +14,20 @@ import (
 	"personio.com/organization-board/repository/login"
 )
 
+// Login : structure to facilitate login into the system
 type Login struct {
 	handlers.HTTPHandler
 	repo *login.LoginRepository
 }
 
+// NewLoginHandler : Constructor for Login
 func NewLoginHandler(conn *sql.DB) *Login {
 	return &Login{
 		repo: login.NewLoginRepository(conn),
 	}
 }
 
+// GetHTTPHandler : return POST http handler for Login resource
 func (lgn *Login) GetHTTPHandler() []*handlers.HTTPHandler {
 	return []*handlers.HTTPHandler{
 		&handlers.HTTPHandler{Authenticated: false,
@@ -36,33 +39,32 @@ func (lgn *Login) GetHTTPHandler() []*handlers.HTTPHandler {
 	}
 }
 
+// Authenticate : Authenticate login request
 func (lgn *Login) Authenticate(w http.ResponseWriter, r *http.Request) {
 	var user *models.User
 	obj := new(models.Login)
 	err := json.NewDecoder(r.Body).Decode(&obj)
-	for {
-		if nil != err {
-			log.Printf("Error while reading the login request:%s", err.Error())
-			break
-		}
-
-		if !obj.Valid() {
-			err = models.InvalidRequest
-			log.Printf("Invalid login request object:%s", models.Stringify(obj))
-			break
-		}
-
-		user, err = lgn.repo.Authenticate(r.Context(), obj)
-		if nil != err {
-			log.Printf("Error in user authentication: %s", err.Error())
-			break
-		}
-
-		mapClaims := jwt.MapClaims{constants.MapClaimUser: user}
-		_, tokenString, _ := constants.AuthToken.Encode(mapClaims)
-		w.Header().Set(constants.AuthorizationHeader, tokenString)
-		break
+	if nil != err {
+		log.Printf("Error while reading the login request:%s", err.Error())
+		handlers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
+		return
 	}
 
-	handlers.WriteJSONResponse(w, r, user, http.StatusOK, err)
+	if !obj.Valid() {
+		log.Printf("Invalid login request object:%s", models.Stringify(obj))
+		handlers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
+		return
+	}
+
+	user, err = lgn.repo.Authenticate(r.Context(), obj)
+	if nil != err {
+		log.Printf("Error in user authentication: %s", err.Error())
+		handlers.WriteJSONResponse(w, r, user, http.StatusUnauthorized, models.ErrUnauthorizedAccess)
+		return
+	}
+
+	mapClaims := jwt.MapClaims{constants.MapClaimUser: user}
+	_, tokenString, _ := constants.AuthToken.Encode(mapClaims)
+	w.Header().Set(constants.AuthorizationHeader, tokenString)
+	handlers.WriteJSONResponse(w, r, user, http.StatusOK, nil)
 }
