@@ -33,6 +33,7 @@ func init() {
 
 	handlerList = []handlers.IHTTPHandler{
 		httpHdlr.NewLoginHandler(conn),
+		httpHdlr.NewEmployeeManagerMapHandler(conn),
 	}
 
 }
