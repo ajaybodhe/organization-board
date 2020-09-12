@@ -51,6 +51,7 @@ func createRouterGroup(router *chi.Mux, authenticated bool) {
 			for _, hlr := range hdlr.GetHTTPHandler() {
 				path := fmt.Sprintf("/api/v%d/%s", hlr.Version, hlr.Path)
 				if authenticated == hlr.Authenticated {
+					log.Println("creating router:", path)
 					switch hlr.Method {
 					case http.MethodGet:
 						r.Get(path, hlr.Func)

@@ -8,7 +8,6 @@ const (
 	authToken           = "#1fsyHGFY8842sfg%$"
 	AuthorizationHeader = "Authorization"
 	MapClaimUser        = "user"
-	PasswordSalt        = "fjs#@&*^CSDF4351Fbsmn"
 )
 
 var (

@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 
-	"personio.com/organization-board/constants"
 	"personio.com/organization-board/models"
 	"personio.com/organization-board/repository"
 )
@@ -24,9 +23,8 @@ func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Logi
 	buffer.WriteString("SELECT id, email")
 	buffer.WriteString(" FROM user_detail")
 	buffer.WriteString(" WHERE email = ?")
-	buffer.WriteString(" AND password = AES_ENCRYPT(?, \"")
-	buffer.WriteString(constants.PasswordSalt)
-	buffer.WriteString("\") AND deleted = 0")
+	buffer.WriteString(" AND password = ?")
+	buffer.WriteString(" AND deleted = 0")
 
 	rows, err := login.conn.QueryContext(ctx, buffer.String(), obj.Email, obj.Password)
 
