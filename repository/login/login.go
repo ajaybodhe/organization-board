@@ -40,7 +40,7 @@ func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Logi
 
 	user = new(models.User)
 	err = rows.Scan(
-		&user.Id,
+		&user.ID,
 		&user.Email,
 	)
 	if err != nil {
