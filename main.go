@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
 
+	"personio.com/organization-board/cache"
 	"personio.com/organization-board/config"
 	"personio.com/organization-board/constants"
 	"personio.com/organization-board/db"
@@ -31,11 +32,12 @@ func init() {
 		log.Fatalf("Error while making db connectiion:%s", err.Error())
 	}
 
+	cache.Init(conn)
+
 	handlerList = []handlers.IHTTPHandler{
 		httpHdlr.NewLoginHandler(conn),
 		httpHdlr.NewEmployeeManagerMapHandler(conn),
 	}
-
 }
 
 func createRouterGroup(router *chi.Mux, authenticated bool) {
