@@ -37,7 +37,45 @@ func (emplyMgrMap *EmployeeManagerMap) GetHTTPHandler() []*handlers.HTTPHandler 
 	}
 }
 
-func updateEmployeeManagerMap(reqEmplyMgrMap models.EmployeeManagerMap) (models.EmployeeManagerMap, error) {
+// Create : supports POST/create semantics on EmployeeManagerMap resource
+func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Request) {
+	var reqEmplyMgrMap models.EmployeeManagerMap
+
+	err := json.NewDecoder(r.Body).Decode(&reqEmplyMgrMap)
+	if nil != err {
+		log.Printf("Error while reading the EmployeeManagerMap request:%s", err.Error())
+		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
+		return
+	}
+
+	if err := reqEmplyMgrMap.Valid(); nil != err {
+		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, err)
+		return
+	}
+
+	// update into cache & db
+	cache.SetEmployeeMgrMap(reqEmplyMgrMap)
+	_, err = emplyMgrMap.repo.Create(r.Context(), reqEmplyMgrMap)
+
+	if nil != err {
+		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
+		return
+	}
+
+	handlers.WriteJSONResponse(w, r, reqEmplyMgrMap, http.StatusOK, nil)
+}
+
+// UPDATE : supports PUT/update semantics on EmployeeManagerMap resource
+func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Request) {
+	var reqEmplyMgrMap models.EmployeeManagerMap
+
+	err := json.NewDecoder(r.Body).Decode(&reqEmplyMgrMap)
+	if nil != err {
+		log.Printf("Error while reading the EmployeeManagerMap request:%s", err.Error())
+		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
+		return
+	}
+
 	currentEmployeeMgrMap := cache.GetEmployeeMgrMap()
 
 	// create new map by merging current(i.e. db) and request map
@@ -52,33 +90,13 @@ func updateEmployeeManagerMap(reqEmplyMgrMap models.EmployeeManagerMap) (models.
 	}
 
 	if err := newEmployeeMgrMap.Valid(); nil != err {
-		return nil, err
-	}
-
-	return newEmployeeMgrMap, nil
-}
-
-// Create : supports POST/create semantics on EmployeeManagerMap resource
-func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Request) {
-	var reqEmplyMgrMap models.EmployeeManagerMap
-
-	err := json.NewDecoder(r.Body).Decode(&reqEmplyMgrMap)
-	if nil != err {
-		log.Printf("Error while reading the EmployeeManagerMap request:%s", err.Error())
-		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
-		return
-	}
-
-	updatedEmployeeManagerMap, err := updateEmployeeManagerMap(reqEmplyMgrMap)
-
-	if nil != err {
 		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, err)
 		return
 	}
 
 	// update into cache & db
-	cache.SetEmployeeMgrMap(updatedEmployeeManagerMap)
-	_, err = emplyMgrMap.repo.Create(r.Context(), updatedEmployeeManagerMap)
+	cache.SetEmployeeMgrMap(newEmployeeMgrMap)
+	_, err = emplyMgrMap.repo.Create(r.Context(), newEmployeeMgrMap)
 
 	if nil != err {
 		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
@@ -86,9 +104,4 @@ func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Req
 	}
 
 	handlers.WriteJSONResponse(w, r, reqEmplyMgrMap, http.StatusOK, nil)
-}
-
-// UPDATE : supports PUT/update semantics on EmployeeManagerMap resource
-func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Request) {
-	emplyMgrMap.Create(w, r)
 }

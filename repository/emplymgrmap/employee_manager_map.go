@@ -65,7 +65,7 @@ func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj i
 }
 
 func (emplymgr *EmployeeManagerMapRepository) deleteAllEmployeeManager() error {
-	query := "DELETE FROM user_detail;"
+	query := "DELETE FROM employee_manager_mapping;"
 
 	if _, err := emplymgr.conn.Exec(query); nil != err {
 		log.Printf("Error while deleting employee_manager_mapping:%s", err)
