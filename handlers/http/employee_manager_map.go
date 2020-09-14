@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-chi/chi"
+
 	"personio.com/organization-board/cache"
 	"personio.com/organization-board/handlers"
 	"personio.com/organization-board/models"
@@ -29,12 +31,53 @@ func NewEmployeeManagerMapHandler(conn *sql.DB) *EmployeeManagerMap {
 func (emplyMgrMap *EmployeeManagerMap) GetHTTPHandler() []*handlers.HTTPHandler {
 	return []*handlers.HTTPHandler{
 		&handlers.HTTPHandler{Authenticated: true,
+			Method:  http.MethodGet,
+			Version: 1, // TODO version your API , it should be date rather than version no
+			Path:    "emplymgrmap/{name}",
+			Func:    emplyMgrMap.GetByID,
+		},
+		&handlers.HTTPHandler{Authenticated: true,
 			Method:  http.MethodPost,
 			Version: 1, // TODO version your API , it should be date rather than version no
 			Path:    "emplymgrmap",
 			Func:    emplyMgrMap.Create,
 		},
+		&handlers.HTTPHandler{Authenticated: true,
+			Method:  http.MethodPut,
+			Version: 1, // TODO version your API , it should be date rather than version no
+			Path:    "emplymgrmap",
+			Func:    emplyMgrMap.Update,
+		},
+
+		&handlers.HTTPHandler{Authenticated: true,
+			Method:  http.MethodGet,
+			Version: 1, // TODO version your API , it should be date rather than version no
+			Path:    "emplymgrmap",
+			Func:    emplyMgrMap.GetAll,
+		},
 	}
+}
+
+// Create : supports POST/create semantics on EmployeeManagerMap resource
+func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Request) {
+	employeeName := chi.URLParam(r, "name")
+	employeeMap := cache.GetEmployeeMgrMap()
+
+	type response struct {
+		Supervisor             string `json:"supervisor"`
+		SupervisorOfsupervisor string `json:"supervisor_of_supervisor"`
+	}
+
+	resp := &response{}
+
+	if supervisor, found := employeeMap[employeeName]; found {
+		resp.Supervisor = supervisor
+		if supervisor, found := employeeMap[employeeName]; found {
+			resp.SupervisorOfsupervisor = supervisor
+		}
+	}
+
+	handlers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
 }
 
 // Create : supports POST/create semantics on EmployeeManagerMap resource
@@ -105,5 +148,11 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 	}
 
 	response := reqEmplyMgrMap.CreateResponse()
+	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
+}
+
+func (emplyMgrMap *EmployeeManagerMap) GetAll(w http.ResponseWriter, r *http.Request) {
+	employeeMap := cache.GetEmployeeMgrMap()
+	response := employeeMap.CreateResponse()
 	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
