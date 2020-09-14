@@ -62,7 +62,8 @@ func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	handlers.WriteJSONResponse(w, r, reqEmplyMgrMap, http.StatusOK, nil)
+	response := reqEmplyMgrMap.CreateResponse()
+	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
 
 // UPDATE : supports PUT/update semantics on EmployeeManagerMap resource
@@ -103,5 +104,6 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	handlers.WriteJSONResponse(w, r, reqEmplyMgrMap, http.StatusOK, nil)
+	response := reqEmplyMgrMap.CreateResponse()
+	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }

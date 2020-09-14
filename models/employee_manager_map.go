@@ -76,3 +76,49 @@ func (emplyMgrMap *EmployeeManagerMap) Valid() error {
 
 	return nil
 }
+
+func createManagerToEmployeeList(emplyMgrMap map[string]string) map[string][]string {
+	mgrEmplyList := make(map[string][]string)
+	for empl, mgr := range emplyMgrMap {
+		mgrEmplyList[mgr] = append(mgrEmplyList[mgr], empl)
+	}
+	for mgr, eplys := range mgrEmplyList {
+		fmt.Println(mgr, eplys)
+	}
+	return mgrEmplyList
+}
+
+func getRootEmployee(emplyMgrMap map[string]string, mgrEmplyList map[string][]string) string {
+	for manager := range mgrEmplyList {
+		if emplyMgrMap[manager] == "" {
+			fmt.Println("Root employee is :", manager)
+			return manager
+		}
+	}
+	return ""
+}
+
+func generateResponseBody(rootEmployee string, mgrEmplyList map[string][]string, response map[string]interface{}) {
+	for _, employee := range mgrEmplyList[rootEmployee] {
+		if response[employee] == nil {
+			nextResponse := make(map[string]interface{})
+			response[employee] = nextResponse
+			generateResponseBody(employee, mgrEmplyList, nextResponse)
+		}
+	}
+}
+
+func (emplyMgrMap *EmployeeManagerMap) CreateResponse() map[string]interface{} {
+	mgrEmplyList := createManagerToEmployeeList(*emplyMgrMap)
+
+	rootEmployee := getRootEmployee(*emplyMgrMap, mgrEmplyList)
+
+	response := make(map[string]interface{})
+
+	nextResponse := make(map[string]interface{})
+	response[rootEmployee] = nextResponse
+
+	generateResponseBody(rootEmployee, mgrEmplyList, nextResponse)
+
+	return response
+}
