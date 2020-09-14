@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
-// IHTTPHandler : interface  http handler
+// IHTTPHandler : interface for http handlers
 type IHTTPHandler interface {
 	GetHTTPHandler() []*HTTPHandler
 	GetByID(http.ResponseWriter, *http.Request)
@@ -15,7 +14,7 @@ type IHTTPHandler interface {
 	GetAll(http.ResponseWriter, *http.Request)
 }
 
-// HTTPHandler : implements IHTTPHandler
+// HTTPHandler : Base Class for all HTTP Handler classes, implements IHTTPHandler
 type HTTPHandler struct {
 	Authenticated bool
 	Method        string
@@ -24,45 +23,32 @@ type HTTPHandler struct {
 	Func          func(http.ResponseWriter, *http.Request)
 }
 
+// GetHTTPHandler : Returns set of http handlers for path/version/method
 func (hdlr *HTTPHandler) GetHTTPHandler() []HTTPHandler {
 	return []HTTPHandler{}
 }
 
+// GetByID : GET method for a resource
 func (hdlr *HTTPHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Create : POST method for a resource
 func (hdlr *HTTPHandler) Create(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Update : PUT method for a resource
 func (hdlr *HTTPHandler) Update(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Delete : DELETE method for a resource
 func (hdlr *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// GetAll : GET method for all the resources in a collection
 func (hdlr *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request) {
-	return
-}
-
-func WriteJSONResponse(w http.ResponseWriter,
-	r *http.Request,
-	payload interface{},
-	code int,
-	err error) {
-
-	var response []byte
-
-	if nil != err {
-		response = []byte(err.Error())
-	} else {
-		response, _ = json.Marshal(payload)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
 	return
 }

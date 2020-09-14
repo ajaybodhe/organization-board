@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 
+	"personio.com/organization-board/apihelpers"
 	"personio.com/organization-board/constants"
 	"personio.com/organization-board/handlers"
 	"personio.com/organization-board/models"
@@ -46,25 +47,25 @@ func (lgn *Login) Authenticate(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&obj)
 	if nil != err {
 		log.Printf("Error while reading the login request:%s", err.Error())
-		handlers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
+		apihelpers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
 		return
 	}
 
 	if !obj.Valid() {
 		log.Printf("Invalid login request object:%s", models.Stringify(obj))
-		handlers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
+		apihelpers.WriteJSONResponse(w, r, user, http.StatusBadRequest, models.ErrInvalidRequest)
 		return
 	}
 
 	user, err = lgn.repo.Authenticate(r.Context(), obj)
 	if nil != err {
 		log.Printf("Error in user authentication: %s", err.Error())
-		handlers.WriteJSONResponse(w, r, user, http.StatusUnauthorized, models.ErrUnauthorizedAccess)
+		apihelpers.WriteJSONResponse(w, r, user, http.StatusUnauthorized, models.ErrUnauthorizedAccess)
 		return
 	}
 
 	mapClaims := jwt.MapClaims{constants.MapClaimUser: user}
 	_, tokenString, _ := constants.AuthToken.Encode(mapClaims)
 	w.Header().Set(constants.AuthorizationHeader, tokenString)
-	handlers.WriteJSONResponse(w, r, user, http.StatusOK, nil)
+	apihelpers.WriteJSONResponse(w, r, user, http.StatusOK, nil)
 }

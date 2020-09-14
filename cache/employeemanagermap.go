@@ -9,11 +9,13 @@ import (
 	"personio.com/organization-board/repository/emplymgrmap"
 )
 
+// in process caching for employee manager map
 var (
 	employeeMgrMap models.EmployeeManagerMap
 	mux            sync.Mutex
 )
 
+// Init : init cache values from DB on startup
 func Init(conn *sql.DB) {
 	dbEmployeeMgrMap, err := emplymgrmap.NewEmployeeManagerMapRepository(conn).GetAll(nil)
 	if nil != err {
@@ -23,6 +25,7 @@ func Init(conn *sql.DB) {
 	employeeMgrMap = dbEmployeeMgrMap.(models.EmployeeManagerMap)
 }
 
+// GetEmployeeMgrMap : read EmployeeManagerMap from cache
 func GetEmployeeMgrMap() models.EmployeeManagerMap {
 	mux.Lock()
 	newEmployeeMgrMap := make(models.EmployeeManagerMap)
@@ -33,6 +36,7 @@ func GetEmployeeMgrMap() models.EmployeeManagerMap {
 	return newEmployeeMgrMap
 }
 
+// SetEmployeeMgrMap : write EmployeeManagerMap to cache
 func SetEmployeeMgrMap(updatedEmployeeMgrMap models.EmployeeManagerMap) {
 	mux.Lock()
 	employeeMgrMap = updatedEmployeeMgrMap

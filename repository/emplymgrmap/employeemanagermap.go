@@ -4,34 +4,38 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 	"strings"
 
 	"personio.com/organization-board/models"
 )
 
+// EmployeeManagerMapRepository : deals with DB(CRUD) operations for EmployeeManagerMap
 type EmployeeManagerMapRepository struct {
 	conn *sql.DB
 }
 
+// NewEmployeeManagerMapRepository : constructor for EmployeeManagerMapRepository
 func NewEmployeeManagerMapRepository(conn *sql.DB) *EmployeeManagerMapRepository {
 	return &EmployeeManagerMapRepository{conn: conn}
 }
 
-func (emplymgr *EmployeeManagerMapRepository) GetByID(cntx context.Context, id int64) (interface{}, error) {
-	return nil, nil
-}
-
+// Create : add records of EmployeeManagerMap into DB
 func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj interface{}) (interface{}, error) {
-	reqEmplyMgrMap := obj.(models.EmployeeManagerMap)
+	reqEmplyMgrMap, ok := obj.(models.EmployeeManagerMap)
+	if !ok {
+		return nil, errors.New("Object is not of type EmployeeManagerMap")
+	}
+
 	if err := emplymgr.deleteAllEmployeeManager(); nil != err {
 		return nil, err
 	}
 
 	var queryBuffer bytes.Buffer
-	queryBuffer.WriteString("INSERT INTO employee_manager_mapping")
-	queryBuffer.WriteString("(employee_name, manager_name)")
-	queryBuffer.WriteString("VALUES")
+	queryBuffer.WriteString(`INSERT INTO employee_manager_mapping
+		(employee_name, manager_name)
+			VALUES`)
 
 	var params []interface{}
 	var placeholders []string
@@ -45,7 +49,6 @@ func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj i
 
 	query := queryBuffer.String()
 	stmt, err := emplymgr.conn.Prepare(query)
-
 	if nil != err {
 		log.Printf("Insert Syntax Error: %s\n\tError Query: %s\n",
 			err.Error(), query)
@@ -75,10 +78,7 @@ func (emplymgr *EmployeeManagerMapRepository) deleteAllEmployeeManager() error {
 	return nil
 }
 
-func (emplymgr *EmployeeManagerMapRepository) Delete(cntx context.Context, id int64) error {
-	return nil
-}
-
+// GetAll : real all records for EmployeeManagerMap from DB
 func (emplymgr *EmployeeManagerMapRepository) GetAll(cntx context.Context) (interface{}, error) {
 	query := "SELECT employee_name, manager_name FROM employee_manager_mapping"
 

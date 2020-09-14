@@ -9,15 +9,18 @@ import (
 	"personio.com/organization-board/repository"
 )
 
+// LoginRepository : deals with DB(CRUD) operations for Login Data
 type LoginRepository struct {
 	repository.Repository
 	conn *sql.DB
 }
 
+// NewLoginRepository : constructor for LoginRepository
 func NewLoginRepository(conn *sql.DB) *LoginRepository {
 	return &LoginRepository{conn: conn}
 }
 
+// Authenticate : Returns authentication information for give Login Details
 func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Login) (user *models.User, err error) {
 	var buffer bytes.Buffer
 	buffer.WriteString(`SELECT id, email
