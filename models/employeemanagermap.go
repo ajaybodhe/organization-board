@@ -9,6 +9,24 @@ import (
 // EmployeeManagerMap : typedef for employee->manager relationship
 type EmployeeManagerMap map[string]string
 
+// CreateManagerToEmployeeList : converts EmployeeManagerMap to ManagerToEmployeeList
+func (emplyMgrMap *EmployeeManagerMap) CreateManagerToEmployeeList() map[string][]string {
+	mgrEmplyList := make(map[string][]string)
+	for empl, mgr := range *emplyMgrMap {
+		mgrEmplyList[mgr] = append(mgrEmplyList[mgr], empl)
+	}
+	return mgrEmplyList
+}
+
+func (emplyMgrMap *EmployeeManagerMap) GetRootEmployee(mgrEmplyList map[string][]string) string {
+	for manager := range mgrEmplyList {
+		if (*emplyMgrMap)[manager] == "" {
+			return manager
+		}
+	}
+	return ""
+}
+
 // Returns error if there is loop in employee hierarchy
 func (emplyMgrMap *EmployeeManagerMap) detectLoopInHierarchy() error {
 	visited := make(map[string]bool)
@@ -74,5 +92,3 @@ func (emplyMgrMap *EmployeeManagerMap) Valid() error {
 
 	return nil
 }
-
-

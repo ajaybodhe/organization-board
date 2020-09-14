@@ -26,15 +26,15 @@ curl -v -d '{"email": "personia@personio.com", "password": "personia"}' -H 'Cont
 ```
 * POST valid Employee to Manager Mapping
 ```
-curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
+curl -d '{"Petre": "Nick","Barbara": "Nick","Nick": "Sophie","Sophie":"Jonas"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
 ```
 * POST Employee to Manager Mapping having loop
 ```
-curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie","Sophie": "Pete"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap? | json_pp
+curl -d '{"Peter": "Nick","Barbara": "Nick","Nick": "Sophie","Sophie": "Peter"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap? | json_pp
 ```
 * POST Employee to Manager Mapping having Multiple Root Employees
 ```
-curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie", "John": "Peter"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
+curl -d '{"Peter": "Nick","Barbara": "Nick","Nick": "Sophie", "John": "Johnie"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
 ```
 * GET complete Employee to Manager mapping
 ```
