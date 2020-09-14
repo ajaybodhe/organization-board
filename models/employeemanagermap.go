@@ -27,17 +27,26 @@ func (emplyMgrMap *EmployeeManagerMap) GetRootEmployee(mgrEmplyList map[string][
 	return ""
 }
 
+// dfs over Manager to Employee list. Returns error if loop exists.
+func dfsToDetectLoop(mgrEmplyList map[string][]string, visited map[string]bool, manager string) error {
+	visited[manager] = true
+	for _, employee := range mgrEmplyList[manager] {
+		if visited[employee] == true {
+			return errors.New("Adding this relationship results in loop : " + employee + "->" + manager)
+		}
+		if err := dfsToDetectLoop(mgrEmplyList, visited, employee); nil != err {
+			return err
+		}
+	}
+	return nil
+}
+
 // Returns error if there is loop in employee hierarchy
 func (emplyMgrMap *EmployeeManagerMap) detectLoopInHierarchy() error {
 	visited := make(map[string]bool)
-	for employee, manager := range *emplyMgrMap {
-		if visited[employee] && visited[manager] {
-			return errors.New("Adding this relationship results in loop : " + employee + "->" + manager)
-		}
-		visited[employee] = true
-		visited[manager] = true
-	}
-	return nil
+	mgrEmplyList := emplyMgrMap.CreateManagerToEmployeeList()
+	rootEmployee := emplyMgrMap.GetRootEmployee(mgrEmplyList)
+	return dfsToDetectLoop(mgrEmplyList, visited, rootEmployee)
 }
 
 // Returns error if there are multiple roots in employee hierarchy
