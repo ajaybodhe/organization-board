@@ -3,6 +3,7 @@ package cache
 import (
 	"database/sql"
 	"log"
+	"sync"
 
 	"personio.com/organization-board/models"
 	"personio.com/organization-board/repository/emplymgrmap"
@@ -10,6 +11,7 @@ import (
 
 var (
 	employeeMgrMap models.EmployeeManagerMap
+	mux            sync.Mutex
 )
 
 func Init(conn *sql.DB) {
@@ -22,9 +24,17 @@ func Init(conn *sql.DB) {
 }
 
 func GetEmployeeMgrMap() models.EmployeeManagerMap {
-	return employeeMgrMap
+	mux.Lock()
+	newEmployeeMgrMap := make(models.EmployeeManagerMap)
+	for employee, manager := range employeeMgrMap {
+		newEmployeeMgrMap[employee] = manager
+	}
+	mux.Unlock()
+	return newEmployeeMgrMap
 }
 
 func SetEmployeeMgrMap(updatedEmployeeMgrMap models.EmployeeManagerMap) {
+	mux.Lock()
 	employeeMgrMap = updatedEmployeeMgrMap
+	mux.Unlock()
 }

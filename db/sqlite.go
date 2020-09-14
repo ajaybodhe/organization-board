@@ -23,7 +23,7 @@ var queries = []string{
 	);`,
 
 	// TODO : we can create seeder package for inserting data in initial state
-	`INSERT OR IGNORE INTO user_detail (email, password, deleted) VALUES ('personia@org.com', 'personia', 0);`,
+	`INSERT OR IGNORE INTO user_detail (email, password, deleted) VALUES ('personia@personio.com', 'personia', 0);`,
 
 	`CREATE TABLE IF NOT EXISTS employee_manager_mapping (
 	    employee_name       TEXT        NOT NULL PRIMARY KEY,

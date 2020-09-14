@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"personio.com/organization-board/apihelpers"
@@ -61,21 +62,15 @@ func (emplyMgrMap *EmployeeManagerMap) GetHTTPHandler() []*handlers.HTTPHandler 
 func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Request) {
 	employeeName := chi.URLParam(r, "name")
 	employeeMap := cache.GetEmployeeMgrMap()
-
-	type response struct {
-		Supervisor             string `json:"supervisor"`
-		SupervisorOfsupervisor string `json:"supervisor_of_supervisor"`
+	supervisor, err := strconv.ParseBool(r.FormValue("supervisor"))
+	if nil != err || !supervisor {
+		log.Printf("Invalid request request:%s", err.Error())
+		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
+		return
 	}
 
-	resp := &response{}
-
-	if supervisor, found := employeeMap[employeeName]; found {
-		resp.Supervisor = supervisor
-		if supervisor, found := employeeMap[employeeName]; found {
-			resp.SupervisorOfsupervisor = supervisor
-		}
-	}
-
+	supervisors := apihelpers.GetSupervisor(employeeName, employeeMap)
+	resp := apihelpers.CreateSuperVisorResponse(supervisors)
 	handlers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
 }
 
