@@ -22,7 +22,12 @@ var queries = []string{
 	    deleted             INT         NOT NULL DEFAULT 0
 	);`,
 
-	`INSERT OR IGNORE INTO user_detail (email, password, deleted) VALUES ('personia@org.com', 'personia', 0)`,
+	`INSERT OR IGNORE INTO user_detail (email, password, deleted) VALUES ('personia@org.com', 'personia', 0);`,
+
+	`CREATE TABLE IF NOT EXISTS employee_manager_mapping (
+	    employee_name       TEXT        NOT NULL PRIMARY KEY,
+	    manager_name        TEXT        NOT NULL
+	);`,
 }
 
 // SQLLite : implement IDB interface for sqllite DB
