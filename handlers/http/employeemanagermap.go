@@ -76,14 +76,14 @@ func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Re
 		}
 	}
 
-	handlers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
+	apihelpers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
 }
 
 // GetAll : get the entire employee hierarchy
 func (emplyMgrMap *EmployeeManagerMap) GetAll(w http.ResponseWriter, r *http.Request) {
 	employeeMap := cache.GetEmployeeMgrMap()
 	response := apihelpers.CreateRemployeeRelationshipResponseTree(employeeMap)
-	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
+	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
 
 // Create : supports POST/create semantics on EmployeeManagerMap resource
@@ -93,12 +93,12 @@ func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Req
 	err := json.NewDecoder(r.Body).Decode(&reqEmplyMgrMap)
 	if nil != err {
 		log.Printf("Error while reading the EmployeeManagerMap request:%s", err.Error())
-		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
 		return
 	}
 
 	if err := reqEmplyMgrMap.Valid(); nil != err {
-		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, err)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, err)
 		return
 	}
 
@@ -107,12 +107,12 @@ func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Req
 	_, err = emplyMgrMap.repo.Create(r.Context(), reqEmplyMgrMap)
 
 	if nil != err {
-		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
 		return
 	}
 
 	response := apihelpers.CreateRemployeeRelationshipResponseTree(reqEmplyMgrMap)
-	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
+	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
 
 // UPDATE : supports PUT/update semantics on EmployeeManagerMap resource
@@ -122,7 +122,7 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 	err := json.NewDecoder(r.Body).Decode(&reqEmplyMgrMap)
 	if nil != err {
 		log.Printf("Error while reading the EmployeeManagerMap request:%s", err.Error())
-		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, models.ErrInvalidRequest)
 		return
 	}
 
@@ -140,7 +140,7 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 	}
 
 	if err := newEmployeeMgrMap.Valid(); nil != err {
-		handlers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, err)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusBadRequest, err)
 		return
 	}
 
@@ -149,10 +149,10 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 	_, err = emplyMgrMap.repo.Create(r.Context(), newEmployeeMgrMap)
 
 	if nil != err {
-		handlers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
+		apihelpers.WriteJSONResponse(w, r, nil, http.StatusInternalServerError, models.ErrDBRecordCreationFailure)
 		return
 	}
 
 	response := apihelpers.CreateRemployeeRelationshipResponseTree(reqEmplyMgrMap)
-	handlers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
+	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
