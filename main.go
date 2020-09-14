@@ -27,7 +27,7 @@ func init() {
 	// Connection Interface is used for database portability
 	var db db.IDB = new(db.SQLLite)
 	// check application able to create connection or not
-	conn, err := db.NewConnection()
+	conn, err := db.NewConnection(config.Config().SQLite.DataSourceName)
 	if nil != err {
 		log.Fatalf("Error while making db connectiion:%s", err.Error())
 	}

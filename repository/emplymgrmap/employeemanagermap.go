@@ -8,6 +8,7 @@ import (
 	"log"
 	"strings"
 
+	"personio.com/organization-board/constants"
 	"personio.com/organization-board/models"
 )
 
@@ -33,9 +34,7 @@ func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj i
 	}
 
 	var queryBuffer bytes.Buffer
-	queryBuffer.WriteString(`INSERT INTO employee_manager_mapping
-		(employee_name, manager_name)
-			VALUES`)
+	queryBuffer.WriteString(constants.EmployeeManagerMappingInsertQuery)
 
 	var params []interface{}
 	var placeholders []string
@@ -68,9 +67,8 @@ func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj i
 }
 
 func (emplymgr *EmployeeManagerMapRepository) deleteAllEmployeeManager() error {
-	query := "DELETE FROM employee_manager_mapping;"
 
-	if _, err := emplymgr.conn.Exec(query); nil != err {
+	if _, err := emplymgr.conn.Exec(constants.EmployeeManagerMappingDeleteQuery); nil != err {
 		log.Printf("Error while deleting employee_manager_mapping:%s", err)
 		return err
 	}
@@ -80,11 +78,9 @@ func (emplymgr *EmployeeManagerMapRepository) deleteAllEmployeeManager() error {
 
 // GetAll : real all records for EmployeeManagerMap from DB
 func (emplymgr *EmployeeManagerMapRepository) GetAll(cntx context.Context) (interface{}, error) {
-	query := "SELECT employee_name, manager_name FROM employee_manager_mapping"
-
 	employeeMgrMap := make(models.EmployeeManagerMap)
 
-	row, err := emplymgr.conn.Query(query)
+	row, err := emplymgr.conn.Query(constants.EmployeeManagerMappingSelectQuery)
 	if nil != err {
 		log.Printf("Error while fetching employee_manager_mapping:%s\n", err.Error())
 		return employeeMgrMap, nil

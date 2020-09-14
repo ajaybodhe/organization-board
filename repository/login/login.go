@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 
+	"personio.com/organization-board/constants"
 	"personio.com/organization-board/models"
 	"personio.com/organization-board/repository"
 )
@@ -23,11 +24,7 @@ func NewLoginRepository(conn *sql.DB) *LoginRepository {
 // Authenticate : Returns authentication information for give Login Details
 func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Login) (user *models.User, err error) {
 	var buffer bytes.Buffer
-	buffer.WriteString(`SELECT id, email
-		FROM user_detail
-		WHERE email = ?
-		AND password = ?
-		AND deleted = 0`)
+	buffer.WriteString(constants.LoginDetailsSelectQuery)
 
 	rows, err := login.conn.QueryContext(ctx, buffer.String(), obj.Email, obj.Password)
 
