@@ -45,11 +45,11 @@ func init() {
 		os.Exit(1)
 	}
 
-	if byts, err := json.Marshal(_config); nil != err {
-		log.Fatalf("Error while json.Marshal config structure: %s", err.Error())
-	} else {
-		log.Println("Application Configuration is:", string(byts))
-	}
+	// if byts, err := json.Marshal(_config); nil != err {
+	// 	log.Fatalf("Error while json.Marshal config structure: %s", err.Error())
+	// } else {
+	// 	log.Println("Application Configuration is:", string(byts))
+	// }
 }
 
 func Config() *ApiConfig {

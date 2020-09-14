@@ -23,5 +23,13 @@ func TestCache_GetEmployeeMgrMap(t *testing.T) {
 	mock.ExpectQuery(constants.EmployeeManagerMappingSelectQuery).WillReturnRows(rows)
 
 	Init(db)
-	assert.Equal(t, models.EmployeeManagerMap{"Nick": "Sophie", "Sophie": "Jonas"}, GetEmployeeMgrMap())
+	expectedEmployeeManagerMap := models.EmployeeManagerMap{"Nick": "Sophie", "Sophie": "Jonas"}
+	assert.Equal(t, expectedEmployeeManagerMap, GetEmployeeMgrMap())
+}
+
+// TestCache_SetEmployeeMgrMap : tests updation of cache vales
+func TestCache_SetEmployeeMgrMap(t *testing.T) {
+	expectedEmployeeManagerMap := models.EmployeeManagerMap{"Nick": "Sophie", "Sophie": "Jonas"}
+	SetEmployeeMgrMap(expectedEmployeeManagerMap)
+	assert.Equal(t, expectedEmployeeManagerMap, GetEmployeeMgrMap())
 }
