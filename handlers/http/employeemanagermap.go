@@ -83,14 +83,14 @@ func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Re
 	}
 
 	supervisors := getSupervisors(employeeName, employeeMap)
-	resp := apihelpers.CreateSuperVisorResponse(supervisors)
+	resp := apihelpers.CreateSupervisorResponse(supervisors)
 	apihelpers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
 }
 
 // GetAll : get the entire employee hierarchy
 func (emplyMgrMap *EmployeeManagerMap) GetAll(w http.ResponseWriter, r *http.Request) {
 	employeeMap := cache.GetEmployeeMgrMap()
-	response := apihelpers.CreateRemployeeRelationshipResponseTree(employeeMap)
+	response := apihelpers.CreateEmployeeRelationshipResponseTree(employeeMap)
 	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
 
@@ -119,7 +119,7 @@ func (emplyMgrMap *EmployeeManagerMap) Create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	response := apihelpers.CreateRemployeeRelationshipResponseTree(reqEmplyMgrMap)
+	response := apihelpers.CreateEmployeeRelationshipResponseTree(reqEmplyMgrMap)
 	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }
 
@@ -161,6 +161,6 @@ func (emplyMgrMap *EmployeeManagerMap) Update(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	response := apihelpers.CreateRemployeeRelationshipResponseTree(reqEmplyMgrMap)
+	response := apihelpers.CreateEmployeeRelationshipResponseTree(reqEmplyMgrMap)
 	apihelpers.WriteJSONResponse(w, r, response, http.StatusOK, nil)
 }

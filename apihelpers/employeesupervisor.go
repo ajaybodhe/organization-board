@@ -1,13 +1,17 @@
 package apihelpers
 
+import (
+	"personio.com/organization-board/models"
+)
+
 // CreateSuperVisorResponse : converts list of supervisors for an employee into a json response
-func CreateSuperVisorResponse(supervisors []string) interface{} {
+func CreateSupervisorResponse(supervisors []string) *models.EmployeeSupervisorResponse {
 	type response struct {
 		Supervisor             string `json:"supervisor"`
 		SupervisorOfsupervisor string `json:"supervisor_of_supervisor"`
 	}
 
-	resp := &response{}
+	resp := &models.EmployeeSupervisorResponse{}
 	for idx, name := range supervisors {
 		switch idx {
 		case 0:

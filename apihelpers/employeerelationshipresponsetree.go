@@ -32,11 +32,11 @@ func convertEmployeeHierarchyToTree(rootEmployee string, mgrEmplyList map[string
 	}
 }
 
-// CreateRemployeeRelationshipResponseTree : creates employee relationship hierarchy tree
+// CreateEmployeeRelationshipResponseTree : creates employee relationship hierarchy tree
 // TODO : we can expose this functionality as an interface.
 // So that response format can be changed as needed.
 // In that case, return value should just be interface{}.
-func CreateRemployeeRelationshipResponseTree(emplyMgrMap models.EmployeeManagerMap) map[string]interface{} {
+func CreateEmployeeRelationshipResponseTree(emplyMgrMap models.EmployeeManagerMap) map[string]interface{} {
 	mgrEmplyList := createManagerToEmployeeList(emplyMgrMap)
 
 	rootEmployee := getRootEmployee(emplyMgrMap, mgrEmplyList)
