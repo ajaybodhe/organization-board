@@ -19,6 +19,31 @@ Script builds GO binary and runs the binary.
 ```
 ./run.sh
 ```
+## CURL Requests For Testing The APP
+* Login and Get JWT token
+```
+curl -v -d '{"email": "personia@personio.com", "password": "personia"}' -H 'Content-Type: application/json' http://localhost:9090/api/v1/login | json_pp
+```
+* POST valid Employee to Manager Mapping
+```
+curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
+```
+* POST Employee to Manager Mapping having loop
+```
+curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie","Sophie": "Pete"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap? | json_pp
+```
+* POST Employee to Manager Mapping having Multiple Root Employees
+```
+curl -d '{"Pete": "Nick","Barbara": "Nick","Nick": "Sophie", "John": "Peter"}' -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap | json_pp
+```
+* GET complete Employee to Manager mapping
+```
+curl -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap? | json_pp
+```
+* GET Supervisor Info of an Employee
+```
+curl -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>TOKEN_From_First_Curl</strong></em>' http://localhost:9090/api/v1/emplymgrmap/Nick?supervisor=true
+```
 
 ## Application Design
 
@@ -72,42 +97,18 @@ Each module mentioned above, has extensive test coverage and each code file is a
 
 
 ## Assumptions
-1. Simple JOIN algorithm : It only takes first match from second file and proceeds further.
+1.  For task No 2, We only support POST semantics for hierarchies. So on each new POST request, we do overwrite the hierarchies in sqlite.
+2. Response for the task No 3, response for retrieving supervisor and super-supervisor is :
 ```
-For each row in first CSV file :
-  For each row in Second CSV file :
-    if join-key has same value for both the rows :
-      - new_row = row from CSV1 + row from CSV2
-      - Add new_row to the ouput
-      - Break and proceed to next row in first CSV file
+{
+  "supervisor" : "Nick",
+  "supervisor_of_supervisor" : "Sophie"
+}
 ```
-2. Query parser is writted as FSM of commands FROM->JOIN->COUNTBY->ORDERBY->TAKE->SELECT. So though not specified in problem definition, "JOIN" can be followed by "ORDERBY', "TAKE" etc.
-3. TAKE value of zero is treated as not specified , so all the rows will be returned.
 
 ## Improvement Ideas
 * BDD frameworks [Gingko](https://onsi.github.io/ginkgo/), [Gomega](https://onsi.github.io/gomega/) can be used for more expressive test cases.
 * Scale/Perf run the app with [pprof](https://blog.golang.org/pprof) to find out any cpu, memory, performance bottlenecks.
 * Improve metric, tracing and logging of app. Use [zap](https://github.com/uber-go/zap)
 * All the errors can be numbered to build full fledged documentation around it.
-
-## LOGIN CURL REQUEST
-curl -v -d '{"email": "personia@org.com", "password": "personia"}' -H 'Content-Type: application/json' http://localhost:9090/api/v1/login?
-*   Trying ::1...
-* TCP_NODELAY set
-* Connected to localhost (::1) port 9090 (#0)
-> POST /api/v1/login? HTTP/1.1
-> Host: localhost:9090
-> User-Agent: curl/7.64.1
-> Accept: */*
-> Content-Type: application/json
-> Content-Length: 53
->
-* upload completely sent off: 53 out of 53 bytes
-< HTTP/1.1 200 OK
-< Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6InBlcnNvbmlhQG9yZy5jb20ifX0._w2Ksdm7sOxiAHJw61ZR1X7aldRLa564wK-9e5O9f-c
-< Content-Type: application/json
-< Date: Sat, 12 Sep 2020 17:26:42 GMT
-< Content-Length: 57
-<
-* Connection #0 to host localhost left intact
-{"status":200,"data":{"id":1,"email":"personia@org.com"}}* Closing connection 0
+* Have a postman collection for all the supported API calls.
