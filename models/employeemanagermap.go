@@ -91,11 +91,11 @@ func (emplyMgrMap *EmployeeManagerMap) Valid() error {
 		return fmt.Errorf("%s", buffer.String())
 	}
 
-	if err := emplyMgrMap.detectMulipleRootsInHierarchy(); nil != err {
+	if err := emplyMgrMap.detectLoopInHierarchy(); nil != err {
 		return err
 	}
 
-	if err := emplyMgrMap.detectLoopInHierarchy(); nil != err {
+	if err := emplyMgrMap.detectMulipleRootsInHierarchy(); nil != err {
 		return err
 	}
 
