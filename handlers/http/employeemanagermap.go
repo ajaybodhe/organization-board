@@ -58,6 +58,19 @@ func (emplyMgrMap *EmployeeManagerMap) GetHTTPHandler() []*handlers.HTTPHandler 
 	}
 }
 
+// getSupervisors: return the supervisor and suprvisor of supervisor for employeeName
+func getSupervisors(employeeName string, employeeMap models.EmployeeManagerMap) []string {
+	var supervisors []string
+	if supervisor, found := employeeMap[employeeName]; found {
+		supervisors = append(supervisors, supervisor)
+		if supervisor, found := employeeMap[supervisor]; found {
+			supervisors = append(supervisors, supervisor)
+		}
+	}
+
+	return supervisors
+}
+
 // GetByID : get supervisor and supervisor of supervisor for an employee
 func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Request) {
 	employeeName := chi.URLParam(r, "name")
@@ -69,7 +82,7 @@ func (emplyMgrMap *EmployeeManagerMap) GetByID(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	supervisors := apihelpers.GetSupervisor(employeeName, employeeMap)
+	supervisors := getSupervisors(employeeName, employeeMap)
 	resp := apihelpers.CreateSuperVisorResponse(supervisors)
 	apihelpers.WriteJSONResponse(w, r, resp, http.StatusOK, nil)
 }

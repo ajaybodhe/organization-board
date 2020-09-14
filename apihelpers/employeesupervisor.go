@@ -1,22 +1,6 @@
 package apihelpers
 
-import (
-	"personio.com/organization-board/models"
-)
-
-//GetSupervisor: return the supervisor and suprvisor of supervisor for employeeName
-func GetSupervisor(employeeName string, employeeMap models.EmployeeManagerMap) []string {
-	var supervisors []string
-	if supervisor, found := employeeMap[employeeName]; found {
-		supervisors = append(supervisors, supervisor)
-		if supervisor, found := employeeMap[supervisor]; found {
-			supervisors = append(supervisors, supervisor)
-		}
-	}
-
-	return supervisors
-}
-
+// CreateSuperVisorResponse : converts list of supervisors for an employee into a json response
 func CreateSuperVisorResponse(supervisors []string) interface{} {
 	type response struct {
 		Supervisor             string `json:"supervisor"`
