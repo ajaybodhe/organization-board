@@ -27,11 +27,8 @@ func TestAuthenticate_Success(t *testing.T) {
 		Password: "personia",
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.LoginDetailsSelectQuery)
-
 	rows := sqlmock.NewRows([]string{"id", "email"}).AddRow(user.ID, user.Email)
-	mock.ExpectQuery(regexp.QuoteMeta(buffer.String())).WithArgs(user.Email, user.Password).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(constants.LoginDetailsSelectQuery)).WithArgs(user.Email, user.Password).WillReturnRows(rows)
 
 	loginRepository := NewLoginRepository(db)
 

@@ -1,7 +1,6 @@
 package emplymgrmap
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"regexp"
@@ -13,6 +12,15 @@ import (
 	"personio.com/organization-board/constants"
 	"personio.com/organization-board/models"
 )
+
+func getTestEmployeeManagerMap() *models.EmployeeManagerMap {
+	emplyMgrMap := make(models.EmployeeManagerMap)
+	emplyMgrMap["Peter"] = "Nick"
+	emplyMgrMap["Barbara"] = "Nick"
+	emplyMgrMap["Nick"] = "Sophie"
+	emplyMgrMap["Sophie"] = "Jonas"
+	return &emplyMgrMap
+}
 
 // TestCreate_Success: test for insert mapping success
 func TestCreate_Success(t *testing.T) {
@@ -26,25 +34,19 @@ func TestCreate_Success(t *testing.T) {
 	mock.ExpectExec(constants.EmployeeManagerMappingDeleteQuery).WillReturnResult(sqlmock.NewResult(0, 0))
 
 	// mocking for insert statement
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.EmployeeManagerMappingInsertQuery)
-	mock.ExpectPrepare(regexp.QuoteMeta(buffer.String())).ExpectExec().WillReturnResult(sqlmock.NewResult(0, 0))
+	mock.ExpectPrepare(regexp.QuoteMeta(constants.EmployeeManagerMappingInsertQuery)).ExpectExec().WillReturnResult(sqlmock.NewResult(0, 0))
 
 	employeeManagerMapRepository := NewEmployeeManagerMapRepository(db)
 	cntx := context.Background()
-	employeeManagerMap := &models.EmployeeManagerMap{}
-	(*employeeManagerMap)["Pete"] = "Nick"
-	(*employeeManagerMap)["Barbara"] = "Nick"
-	(*employeeManagerMap)["Nick"] = "Sophie"
-	(*employeeManagerMap)["Sophie"] = "Jonas"
+	employeeManagerMap := getTestEmployeeManagerMap()
 
 	_, err = employeeManagerMapRepository.Create(cntx, *employeeManagerMap)
 
 	assert.Nil(t, err)
 }
 
-// TestCreate_Fail_Delete: test for insert mapping failure (delete fail)
-func TestCreate_Fail_Delete(t *testing.T) {
+// TestCreate_FailOnDelete: test for insert mapping failure (delete fail)
+func TestCreate_FailOnDelete(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -55,25 +57,19 @@ func TestCreate_Fail_Delete(t *testing.T) {
 	mock.ExpectExec(constants.EmployeeManagerMappingDeleteQuery).WillReturnError(errors.New("MOCK ERROR: In delete"))
 
 	// mocking for insert statement
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.EmployeeManagerMappingInsertQuery)
-	mock.ExpectPrepare(regexp.QuoteMeta(buffer.String())).ExpectExec().WillReturnResult(sqlmock.NewResult(0, 0))
+	mock.ExpectPrepare(regexp.QuoteMeta(constants.EmployeeManagerMappingInsertQuery)).ExpectExec().WillReturnResult(sqlmock.NewResult(0, 0))
 
 	employeeManagerMapRepository := NewEmployeeManagerMapRepository(db)
 	cntx := context.Background()
-	employeeManagerMap := &models.EmployeeManagerMap{}
-	(*employeeManagerMap)["Pete"] = "Nick"
-	(*employeeManagerMap)["Barbara"] = "Nick"
-	(*employeeManagerMap)["Nick"] = "Sophie"
-	(*employeeManagerMap)["Sophie"] = "Jonas"
+	employeeManagerMap := getTestEmployeeManagerMap()
 
 	_, err = employeeManagerMapRepository.Create(cntx, *employeeManagerMap)
 
 	assert.NotNil(t, err)
 }
 
-// TestCreate_Fail_Insert: test for insert mapping failure (insert fail)
-func TestCreate_Fail_Insert(t *testing.T) {
+// TestCreate_FailOnInsert: test for insert mapping failure (insert fail)
+func TestCreate_FailOnInsert(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -84,17 +80,11 @@ func TestCreate_Fail_Insert(t *testing.T) {
 	mock.ExpectExec(constants.EmployeeManagerMappingDeleteQuery).WillReturnResult(sqlmock.NewResult(0, 0))
 
 	// mocking for insert statement
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.EmployeeManagerMappingInsertQuery)
-	mock.ExpectPrepare(regexp.QuoteMeta(buffer.String())).ExpectExec().WillReturnError(errors.New("MOCK ERROR: In delete"))
+	mock.ExpectPrepare(regexp.QuoteMeta(constants.EmployeeManagerMappingInsertQuery)).ExpectExec().WillReturnError(errors.New("MOCK ERROR: In delete"))
 
 	employeeManagerMapRepository := NewEmployeeManagerMapRepository(db)
 	cntx := context.Background()
-	employeeManagerMap := &models.EmployeeManagerMap{}
-	(*employeeManagerMap)["Pete"] = "Nick"
-	(*employeeManagerMap)["Barbara"] = "Nick"
-	(*employeeManagerMap)["Nick"] = "Sophie"
-	(*employeeManagerMap)["Sophie"] = "Jonas"
+	employeeManagerMap := getTestEmployeeManagerMap()
 
 	_, err = employeeManagerMapRepository.Create(cntx, *employeeManagerMap)
 
@@ -115,7 +105,7 @@ func TestGetAll_Sucess(t *testing.T) {
 		ManagerName  string
 	}
 	emplyMgrMapList := []emplyMgrMap{
-		{EmployeeName: "Pete", ManagerName: "Nick"},
+		{EmployeeName: "Peter", ManagerName: "Nick"},
 		{EmployeeName: "Barbara", ManagerName: "Nick"},
 	}
 

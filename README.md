@@ -49,7 +49,7 @@ curl -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>T
 
 ### High Level Design :
 Structuring of code is inspired from [MindInventory](https://github.com/Mindinventory/Golang-Project-Structure)
-
+<br/>JWT Tokens are used for authentication.<br/>Write-through cache added on top of DB to expedite GET APIs.
 #### Resource :
 Resources such as config files, sqlite db files etc
 #### Config :

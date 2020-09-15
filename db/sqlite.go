@@ -39,6 +39,9 @@ type SQLLite struct {
 func (lite *SQLLite) NewConnection() (*sql.DB, error) {
 	sqliteCfg := config.Config().SQLite
 	log.Println(sqliteCfg.DataSourceName)
+	// TODO set
+	// db.SetMaxIdleConns(idleConn)
+	// db.SetMaxOpenConns(maxConn)
 	return sql.Open(sqliteDriverName, sqliteCfg.DataSourceName)
 }
 
