@@ -25,7 +25,6 @@ func NewLoginRepository(conn *sql.DB) *LoginRepository {
 func (login *LoginRepository) Authenticate(ctx context.Context, obj *models.Login) (user *models.User, err error) {
 	var buffer bytes.Buffer
 	buffer.WriteString(constants.LoginDetailsSelectQuery)
-
 	rows, err := login.conn.QueryContext(ctx, buffer.String(), obj.Email, obj.Password)
 
 	if err != nil {
