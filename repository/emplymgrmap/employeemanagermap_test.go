@@ -14,7 +14,7 @@ import (
 	"personio.com/organization-board/models"
 )
 
-// TestCache_Authenticate_Success: test for insert mapping success
+// TestCreate_Success: test for insert mapping success
 func TestCreate_Success(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -43,7 +43,7 @@ func TestCreate_Success(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-// TestCreate_Fail: test for insert mapping failure (delete fail)
+// TestCreate_Fail_Delete: test for insert mapping failure (delete fail)
 func TestCreate_Fail_Delete(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -136,7 +136,7 @@ func TestGetAll_Sucess(t *testing.T) {
 	assert.Equal(t, len(dbEmplyMgrMapList), 2)
 }
 
-// TestGetAll_Sucess: test for error while fetching data from db
+// TestGetAll_Fail: test for error while fetching data from db
 func TestGetAll_Fail(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
