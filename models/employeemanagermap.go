@@ -18,6 +18,7 @@ func (emplyMgrMap *EmployeeManagerMap) CreateManagerToEmployeeList() map[string]
 	return mgrEmplyList
 }
 
+// GetRootEmployee : returns name of employee at root
 func (emplyMgrMap *EmployeeManagerMap) GetRootEmployee(mgrEmplyList map[string][]string) string {
 	for manager := range mgrEmplyList {
 		if (*emplyMgrMap)[manager] == "" {
@@ -27,51 +28,70 @@ func (emplyMgrMap *EmployeeManagerMap) GetRootEmployee(mgrEmplyList map[string][
 	return ""
 }
 
-// dfs over Manager to Employee list. Returns error if loop exists.
-func dfsToDetectLoop(mgrEmplyList map[string][]string, visited map[string]bool, manager string) error {
+// dfs over Employee to Manager list. Returns error if loop exists.
+func (emplyMgrMap *EmployeeManagerMap) dfsToDetectLoop(visited map[string]bool, employee, manager string) error {
+	if visited[manager] == true {
+		return errors.New("Adding this relationship results in loop : " + employee + "->" + manager)
+	}
 	visited[manager] = true
-	for _, employee := range mgrEmplyList[manager] {
-		if visited[employee] == true {
-			return errors.New("Adding this relationship results in loop : " + employee + "->" + manager)
-		}
-		if err := dfsToDetectLoop(mgrEmplyList, visited, employee); nil != err {
-			return err
-		}
+	if newManager, ok := (*emplyMgrMap)[manager]; ok {
+		return emplyMgrMap.dfsToDetectLoop(visited, manager, newManager)
 	}
 	return nil
 }
 
 // Returns error if there is loop in employee hierarchy
 func (emplyMgrMap *EmployeeManagerMap) detectLoopInHierarchy() error {
-	visited := make(map[string]bool)
-	mgrEmplyList := emplyMgrMap.CreateManagerToEmployeeList()
-	rootEmployee := emplyMgrMap.GetRootEmployee(mgrEmplyList)
-	return dfsToDetectLoop(mgrEmplyList, visited, rootEmployee)
-}
-
-// Returns error if there are multiple roots in employee hierarchy
-func (emplyMgrMap *EmployeeManagerMap) detectMulipleRootsInHierarchy() error {
-	visited := make(map[string]bool)
-	rootEmployee := ""
 	for employee, manager := range *emplyMgrMap {
-		if visited[employee] == false {
-			visited[employee] = true
-			newManager := manager
-			for visited[newManager] != true {
-				visited[newManager] = true
-				if (*emplyMgrMap)[newManager] == "" {
-					if rootEmployee == "" {
-						rootEmployee = newManager
-						break
-					}
-					return errors.New("There are at least two root employees : " + rootEmployee + " & " + newManager)
-				}
-				newManager = (*emplyMgrMap)[newManager]
-			}
+		visited := make(map[string]bool)
+		visited[employee] = true
+		if err := emplyMgrMap.dfsToDetectLoop(visited, employee, manager); nil != err {
+			return err
 		}
 	}
 	return nil
 }
+
+// Returns error if there are multiple roots in employee hierarchy
+func (emplyMgrMap *EmployeeManagerMap) detectMulipleRootsInHierarchy() error {
+	mgrEmplyList := emplyMgrMap.CreateManagerToEmployeeList()
+	rootEmployee := ""
+	for manager := range mgrEmplyList {
+		if (*emplyMgrMap)[manager] == "" {
+			if "" != rootEmployee {
+				return errors.New("There are at least two root employees : " + rootEmployee + " & " + manager)
+			}
+			rootEmployee = manager
+		}
+	}
+	return nil
+}
+
+// TODO : multiple algos to detect loop, decide which one is better
+// Returns error if there are multiple roots in employee hierarchy
+// func (emplyMgrMap *EmployeeManagerMap) detectMulipleRootsInHierarchy() error {
+// 	visited := make(map[string]bool)
+// 	rootEmployee := ""
+// 	for employee, manager := range *emplyMgrMap {
+// 		if visited[employee] == false {
+// 			visited[employee] = true
+// 			newManager := manager
+// 			for visited[newManager] != true {
+// 				visited[newManager] = true
+// 				if (*emplyMgrMap)[newManager] == "" {
+// 					if rootEmployee == "" {
+// 						rootEmployee = newManager
+// 						break
+// 					}
+// 					return errors.New("There are at least two root employees : " + rootEmployee + " & " + newManager)
+// 				}
+// 				newManager = (*emplyMgrMap)[newManager]
+// 			}
+// 		}
+// 	}
+// // TODO : if rootEmploye is "", then its a loop but we need to find the relationship that adds the loop.
+// return nil
+// }
 
 // Valid : checks EmployeeManagerMap if struct is valid
 func (emplyMgrMap *EmployeeManagerMap) Valid() error {
@@ -91,11 +111,11 @@ func (emplyMgrMap *EmployeeManagerMap) Valid() error {
 		return fmt.Errorf("%s", buffer.String())
 	}
 
-	if err := emplyMgrMap.detectLoopInHierarchy(); nil != err {
+	if err := emplyMgrMap.detectMulipleRootsInHierarchy(); nil != err {
 		return err
 	}
 
-	if err := emplyMgrMap.detectMulipleRootsInHierarchy(); nil != err {
+	if err := emplyMgrMap.detectLoopInHierarchy(); nil != err {
 		return err
 	}
 

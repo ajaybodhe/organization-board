@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,9 +9,22 @@ import (
 
 // TestEmployeeManagerMap_Valid : tests valid EmployeeManagerMap
 func TestEmployeeManagerMap_Valid(t *testing.T) {
-	emm := make(EmployeeManagerMap)
-	emm["person1"] = "person2"
+	emm := getTestEmployeeManagerMap()
 	assert.Nil(t, emm.Valid())
+}
+
+// TestEmployeeManagerMap_MultipleRoots : tests EmployeeManagerMap with multiple roots
+func TestEmployeeManagerMap_MultipleRoots(t *testing.T) {
+	emm := getTestEmployeeManagerMap()
+	(*emm)["John"] = "Johnie"
+	assert.True(t, strings.HasPrefix(emm.Valid().Error(), "There are at least two root employees"))
+}
+
+// TestEmployeeManagerMap_Loop : tests EmployeeManagerMap with loops
+func TestEmployeeManagerMap_Loop(t *testing.T) {
+	emm := getTestEmployeeManagerMap()
+	(*emm)["Jonas"] = "Barbara"
+	assert.True(t, strings.HasPrefix(emm.Valid().Error(), "Adding this relationship results in loop"))
 }
 
 // TestEmployeeManagerMap_InValid : tests invalid EmployeeManagerMap
@@ -24,7 +38,7 @@ func TestEmployeeManagerMap_InValid(t *testing.T) {
 
 func getTestEmployeeManagerMap() *EmployeeManagerMap {
 	emplyMgrMap := make(EmployeeManagerMap)
-	emplyMgrMap["Pete"] = "Nick"
+	emplyMgrMap["Peter"] = "Nick"
 	emplyMgrMap["Barbara"] = "Nick"
 	emplyMgrMap["Nick"] = "Sophie"
 	emplyMgrMap["Sophie"] = "Jonas"
@@ -36,7 +50,7 @@ func TestCreateManagerToEmployeeList(t *testing.T) {
 	emplyMgrMap := getTestEmployeeManagerMap()
 
 	expectedMgrEmployeeList := map[string][]string{
-		"Nick":   []string{"Pete", "Barbara"},
+		"Nick":   []string{"Peter", "Barbara"},
 		"Jonas":  []string{"Sophie"},
 		"Sophie": []string{"Nick"},
 	}
