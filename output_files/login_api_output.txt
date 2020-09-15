@@ -1,0 +1,31 @@
+abodhe-C02ZH5LCLVDQ:organization-board abodhe$ curl -v -d '{"email": "personia@personio.com", "password": "personia"}' -H 'Content-Type: application/json' http://localhost:9090/api/v1/login | json_pp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 9090 (#0)
+> POST /api/v1/login HTTP/1.1
+> Host: localhost:9090
+> User-Agent: curl/7.64.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 58
+>
+} [58 bytes data]
+* upload completely sent off: 58 out of 58 bytes
+< HTTP/1.1 200 OK
+< Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6InBlcnNvbmlhQHBlcnNvbmlvLmNvbSIsInBhc3N3b3JkIjoiIn19.DiQ-NQCpMZUIQWtqt6aMYg90CeF2Q1yPTuWBy7a4iVU
+< Content-Type: application/json
+< Date: Tue, 15 Sep 2020 14:06:34 GMT
+< Content-Length: 54
+<
+{ [54 bytes data]
+100   112  100    54  100    58  27000  29000 --:--:-- --:--:-- --:--:-- 56000
+* Connection #0 to host localhost left intact
+* Closing connection 0
+{
+   "password" : "",
+   "id" : 1,
+   "email" : "personia@personio.com"
+}
+abodhe-C02ZH5LCLVDQ:organization-board abodhe$

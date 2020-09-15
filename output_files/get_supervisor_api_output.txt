@@ -1,0 +1,9 @@
+abodhe-C02ZH5LCLVDQ:organization-board abodhe$ curl -H 'Content-Type: application/json' -H 'Authorization: BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6InBlcnNvbmlhQHBlcnNvbmlvLmNvbSIsInBhc3N3b3JkIjoiIn19.DiQ-NQCpMZUIQWtqt6aMYg90CeF2Q1yPTuWBy7a4iVU' http://localhost:9090/api/v1/emplymgrmap/Nick?supervisor=true|json_pp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    58  100    58    0     0  58000      0 --:--:-- --:--:-- --:--:-- 58000
+{
+   "supervisor_of_supervisor" : "Jonas",
+   "supervisor" : "Sophie"
+}
+abodhe-C02ZH5LCLVDQ:organization-board abodhe$
