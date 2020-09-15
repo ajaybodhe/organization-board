@@ -14,7 +14,7 @@ import (
 )
 
 // TestCache_Authenticate_Success: test for login success
-func TestCache_Authenticate_Success(t *testing.T) {
+func TestAuthenticate_Success(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -48,7 +48,7 @@ func TestCache_Authenticate_Success(t *testing.T) {
 }
 
 // TestCache_Authenticate_Fail: test for login fail
-func TestCache_Authenticate_Fail(t *testing.T) {
+func TestAuthenticate_Fail(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

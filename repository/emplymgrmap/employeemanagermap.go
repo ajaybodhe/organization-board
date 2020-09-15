@@ -67,7 +67,6 @@ func (emplymgr *EmployeeManagerMapRepository) Create(cntx context.Context, obj i
 }
 
 func (emplymgr *EmployeeManagerMapRepository) deleteAllEmployeeManager() error {
-
 	if _, err := emplymgr.conn.Exec(constants.EmployeeManagerMappingDeleteQuery); nil != err {
 		log.Printf("Error while deleting employee_manager_mapping:%s", err)
 		return err
@@ -83,7 +82,7 @@ func (emplymgr *EmployeeManagerMapRepository) GetAll(cntx context.Context) (inte
 	row, err := emplymgr.conn.Query(constants.EmployeeManagerMappingSelectQuery)
 	if nil != err {
 		log.Printf("Error while fetching employee_manager_mapping:%s\n", err.Error())
-		return employeeMgrMap, nil
+		return employeeMgrMap, err
 	}
 
 	defer row.Close()
