@@ -28,8 +28,13 @@ func TestWriteJSONResponse_Valid(t *testing.T) {
 // TestWriteJSONResponse_ErrorResponse : tests if error json response reaches the client or not
 func TestWriteJSONResponse_ErrorResponse(t *testing.T) {
 	w := httptest.NewRecorder()
-	expectedErrorResponse := errors.New("Your input is incorrect!")
-	WriteJSONResponse(w, nil, nil, http.StatusBadRequest, expectedErrorResponse)
+	expectedError := errors.New("Your input is incorrect!")
+	expectedErrorResponse := &models.ErrorResponse{
+		ErrorMessage: expectedError.Error(),
+	}
+	expectedErrorResponseJSON, err := json.Marshal(expectedErrorResponse)
+	assert.Nil(t, err)
+	WriteJSONResponse(w, nil, nil, http.StatusBadRequest, expectedError)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, expectedErrorResponse.Error(), w.Body.String())
+	assert.Equal(t, string(expectedErrorResponseJSON), w.Body.String())
 }

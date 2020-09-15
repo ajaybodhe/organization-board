@@ -3,6 +3,8 @@ package apihelpers
 import (
 	"encoding/json"
 	"net/http"
+
+	"personio.com/organization-board/models"
 )
 
 // WriteJSONResponse : send http response to client
@@ -15,7 +17,10 @@ func WriteJSONResponse(w http.ResponseWriter,
 	var response []byte
 
 	if nil != err {
-		response = []byte(err.Error())
+		errResponse := &models.ErrorResponse{
+			ErrorMessage: err.Error(),
+		}
+		response, _ = json.Marshal(errResponse)
 	} else {
 		response, _ = json.Marshal(payload)
 	}

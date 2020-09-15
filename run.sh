@@ -11,6 +11,6 @@ fi
 # Build the code
 go build
 # Remove the DB file
-rm resource/organization-board.db
+# rm resource/organization-board.db
 # Run the binary
 ./organization-board

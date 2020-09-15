@@ -9,31 +9,31 @@ import (
 
 // TestEmployeeManagerMap_Valid : tests valid EmployeeManagerMap
 func TestEmployeeManagerMap_Valid(t *testing.T) {
-	emm := getTestEmployeeManagerMap()
-	assert.Nil(t, emm.Valid())
+	emplyMgrMap := getTestEmployeeManagerMap()
+	assert.Nil(t, emplyMgrMap.Valid())
 }
 
 // TestEmployeeManagerMap_MultipleRoots : tests EmployeeManagerMap with multiple roots
 func TestEmployeeManagerMap_MultipleRoots(t *testing.T) {
-	emm := getTestEmployeeManagerMap()
-	(*emm)["John"] = "Johnie"
-	assert.True(t, strings.HasPrefix(emm.Valid().Error(), "There are at least two root employees"))
+	emplyMgrMap := getTestEmployeeManagerMap()
+	(*emplyMgrMap)["John"] = "Johnie"
+	assert.True(t, strings.HasPrefix(emplyMgrMap.Valid().Error(), "There are at least two root employees"))
 }
 
 // TestEmployeeManagerMap_Loop : tests EmployeeManagerMap with loops
 func TestEmployeeManagerMap_Loop(t *testing.T) {
-	emm := getTestEmployeeManagerMap()
-	(*emm)["Jonas"] = "Barbara"
-	assert.True(t, strings.HasPrefix(emm.Valid().Error(), "Adding this relationship results in loop"))
+	emplyMgrMap := getTestEmployeeManagerMap()
+	(*emplyMgrMap)["Jonas"] = "Barbara"
+	assert.True(t, strings.HasPrefix(emplyMgrMap.Valid().Error(), "Adding this relationship results in loop"))
 }
 
 // TestEmployeeManagerMap_InValid : tests invalid EmployeeManagerMap
 func TestEmployeeManagerMap_InValid(t *testing.T) {
-	emm := make(EmployeeManagerMap)
-	assert.NotNil(t, emm.Valid())
+	emplyMgrMap := make(EmployeeManagerMap)
+	assert.NotNil(t, emplyMgrMap.Valid())
 
-	emm["person1"] = ""
-	assert.NotNil(t, emm.Valid())
+	emplyMgrMap["person1"] = ""
+	assert.NotNil(t, emplyMgrMap.Valid())
 }
 
 func getTestEmployeeManagerMap() *EmployeeManagerMap {

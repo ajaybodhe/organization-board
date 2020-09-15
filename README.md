@@ -48,29 +48,43 @@ curl -H 'Content-Type: application/json' -H 'Authorization: BEARER <strong><em>T
 ## Application Design
 
 ### High Level Design :
-#### resource :
-#### config :
-#### constants :
-#### models :
-#### db :
-#### repository :
+Structuring of code is inspired from [MindInventory](https://github.com/Mindinventory/Golang-Project-Structure)
+
+#### Resource :
+Resources such as config files, sqlite db files etc
+#### Config :
+Config key-value definitions for the Project, derived from config files stores in Resource section.
+#### Constants :
+Project constants such as SQL Query definitions, Authentication constants etc
+#### Models :
+Domain data model for the project, all POJO go here.
+#### Db :
+Exposes DB interface, actual concrete implementation is hidden by this interface.
+#### Repository :
+CRUD layer on Models using DB interace.
 #### cache :
+In Process caching implementation on DB layer to expedite GET queries.
 #### handlers
-#### apihelpers
+Combines classic functionality of controllers and service layers into single layer for simplicity. First point of entry for each API request, encaspsulates service logic.
+#### Apihelpers
+Helper functions to generate the HTTP responses from domain models.
+
 
 
 ## Assumptions
-1.  For task No 1, We only support POST semantics for hierarchies. So on each new POST request, we do overwrite the hierarchies in sqlite.
-2. Response for the task No 3, response for retrieving supervisor and super-supervisor is :
+* For task No 1, We only support POST semantics for hierarchies. So on each new POST request, we do overwrite the hierarchies in sqlite.
+* Response for the task No 3, response for retrieving supervisor and super-supervisor is :
 ```
 {
   "supervisor" : "Nick",
   "supervisor_of_supervisor" : "Sophie"
 }
 ```
-3. For task No 4, we have created a dummy user in DB with email and password credentials.<br/> To use the APIs, first get the JWT token using Login Curl command. All other API calls are authenticated using this JWT token.
+* For task No 4, we have created a dummy user in DB with email and password credentials.<br/> To use the APIs, first get the JWT token using Login Curl command. All other API calls are authenticated using this JWT token.
 
 ## Improvement Ideas
+* Caching impllementation is very basic as of now, can be extended to use Bigcache/Redis. Also cache includes entire Employee to Manger Map, can be extended to cache Hierarchical response and Supervisor info of employees.
+* Add Context as first param of each function which enables common parameter passing and deadlines.
 * BDD frameworks [Gingko](https://onsi.github.io/ginkgo/), [Gomega](https://onsi.github.io/gomega/) can be used for more expressive test cases.
 * Scale/Perf run the app with [pprof](https://blog.golang.org/pprof) to find out any cpu, memory, performance bottlenecks.
 * Improve metric, tracing and logging of app. Use [zap](https://github.com/uber-go/zap)
