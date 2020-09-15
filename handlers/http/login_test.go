@@ -30,11 +30,8 @@ func TestAuthenticate_Success(t *testing.T) {
 		Password: "personia",
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.LoginDetailsSelectQuery)
-
 	rows := sqlmock.NewRows([]string{"id", "email"}).AddRow(user.ID, user.Email)
-	mock.ExpectQuery(regexp.QuoteMeta(buffer.String())).WithArgs(user.Email, user.Password).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(constants.LoginDetailsSelectQuery)).WithArgs(user.Email, user.Password).WillReturnRows(rows)
 
 	lgnHandler := NewLoginHandler(db)
 
@@ -50,8 +47,8 @@ func TestAuthenticate_Success(t *testing.T) {
 	assert.NotEmpty(t, w.Header().Get("Authorization"))
 }
 
-// TestAuthenticate_Failed: test for authentication failed
-func TestAuthenticate_Failed(t *testing.T) {
+// TestAuthenticate_Failure: test for authentication failed
+func TestAuthenticate_Failure(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -65,10 +62,7 @@ func TestAuthenticate_Failed(t *testing.T) {
 		Password: "personia",
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(constants.LoginDetailsSelectQuery)
-
-	mock.ExpectQuery(regexp.QuoteMeta(buffer.String())).WithArgs(user.Email, user.Password).WillReturnError(errors.New("MOCK ERROR: Authentication Failed"))
+	mock.ExpectQuery(regexp.QuoteMeta(constants.LoginDetailsSelectQuery)).WithArgs(user.Email, user.Password).WillReturnError(errors.New("MOCK ERROR: Authentication Failed"))
 
 	lgnHandler := NewLoginHandler(db)
 
